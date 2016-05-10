@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.Input;
 
-namespace FirstGame
+namespace FirstGame.model
 {
 	/// <summary>
 	/// This is the main type for your game.
@@ -15,6 +15,20 @@ namespace FirstGame
 		private GraphicsDeviceManager graphics;
 		private SpriteBatch spriteBatch;
 		private Player player;
+
+
+		// Keyboard states used to determine key presses
+		private KeyboardState currentKeyboardState;
+		private KeyboardState previousKeyboardState;
+
+		// Gamepad states used to determine button presses
+		private GamePadState currentGamePadState;
+		private GamePadState previousGamePadState; 
+
+		// A movement speed for the player
+		private float playerMoveSpeed;
+
+
 		public Game1 ()
 		{
 			graphics = new GraphicsDeviceManager (this);
@@ -46,12 +60,42 @@ namespace FirstGame
 			Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,GraphicsDevice.Viewport.TitleSafeArea.Y +GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 			player.Initialize(Content.Load<Texture2D>("player"), playerPosition);
 		}
+		#region Update Region
+		private void updatePlayer(GameTime gameTime)
+		{
+			// Get Thumbstick Controls
+			player.Position.X += currentGamePadState.ThumbSticks.Left.X *playerMoveSpeed;
+			player.Position.Y -= currentGamePadState.ThumbSticks.Left.Y *playerMoveSpeed;
 
-		/// <summary>
-		/// Allows the game to run logic such as updating the world,
-		/// checking for collisions, gathering input, and playing audio.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+			// Use the Keyboard / Dpad
+			if (currentKeyboardState.IsKeyDown(Keys.Left) ||
+				currentGamePadState.DPad.Left == ButtonState.Pressed)
+			{
+				player.Position.X -= playerMoveSpeed;
+			}
+			if (currentKeyboardState.IsKeyDown(Keys.Right) ||
+				currentGamePadState.DPad.Right == ButtonState.Pressed)
+			{
+				player.Position.X += playerMoveSpeed;
+			}
+			if (currentKeyboardState.IsKeyDown(Keys.Up) ||
+				currentGamePadState.DPad.Up == ButtonState.Pressed)
+			{
+				player.Position.Y -= playerMoveSpeed;
+			}
+			if (currentKeyboardState.IsKeyDown(Keys.Down) ||
+				currentGamePadState.DPad.Down == ButtonState.Pressed)
+			{
+				player.Position.Y += playerMoveSpeed;
+			}
+
+			// Make sure that the player does not go out of bounds
+			player.Position.X = MathHelper.Clamp(player.Position.X, 0,GraphicsDevice.Viewport.Width - player.Width);
+			player.Position.Y = MathHelper.Clamp(player.Position.Y, 0,GraphicsDevice.Viewport.Height - player.Height);
+
+		}
+		#endregion
+
 		protected override void Update (GameTime gameTime)
 		{
 			// For Mobile devices, this logic will close the Game when the Back button is pressed
