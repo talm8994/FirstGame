@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace FirstGame
+namespace FirstGame.model
 {
 	public class Player
 	{
 		private int score;
 		private bool activate;
-		private health;
+		private int health;
 
 		// Animation representing the player
 		public Texture2D PlayerTexture;

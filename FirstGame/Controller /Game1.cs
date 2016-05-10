@@ -12,9 +12,9 @@ namespace FirstGame
 	/// </summary>
 	public class Game1 : Game
 	{
-		GraphicsDeviceManager graphics;
-		SpriteBatch spriteBatch;
-
+		private GraphicsDeviceManager graphics;
+		private SpriteBatch spriteBatch;
+		private Player player;
 		public Game1 ()
 		{
 			graphics = new GraphicsDeviceManager (this);
@@ -29,8 +29,8 @@ namespace FirstGame
 		/// </summary>
 		protected override void Initialize ()
 		{
-			// TODO: Add your initialization logic here
-            
+			player = new Player ();
+
 			base.Initialize ();
 		}
 
@@ -43,7 +43,8 @@ namespace FirstGame
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch (GraphicsDevice);
 
-			//TODO: use this.Content to load your game content here 
+			Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X,GraphicsDevice.Viewport.TitleSafeArea.Y +GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+			player.Initialize(Content.Load<Texture2D>("player"), playerPosition);
 		}
 
 		/// <summary>
@@ -73,6 +74,14 @@ namespace FirstGame
 		{
 			graphics.GraphicsDevice.Clear (Color.CornflowerBlue);
             
+			// Start drawing
+			spriteBatch.Begin();
+
+			// Draw the Player
+			player.Draw(spriteBatch);
+
+			// Stop drawing
+			spriteBatch.End();
 			//TODO: Add your drawing code here
             
 			base.Draw (gameTime);
